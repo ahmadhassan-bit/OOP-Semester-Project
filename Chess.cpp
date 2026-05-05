@@ -10,9 +10,13 @@ protected:
     char color;
 
 public:
-    Piece(char c) { color = c; }
+    Piece(char c) { 
+        color = c;
+     }
 
-    char getColor() { return color; }
+    char getColor() { 
+        return color; 
+    }
 
     virtual char getSymbol() = 0;
 
@@ -263,14 +267,20 @@ public:
             b.grid[6][i] = new Pawn('W');
         }
 
-        b.grid[0][0] = b.grid[0][7] = new Rook('B');
-        b.grid[7][0] = b.grid[7][7] = new Rook('W');
+        b.grid[0][0] = new Rook('B');
+        b.grid[0][7] = new Rook('B');
+        b.grid[7][0] = new Rook('W');
+        b.grid[7][7] = new Rook('W');
 
-        b.grid[0][1] = b.grid[0][6] = new Knight('B');
-        b.grid[7][1] = b.grid[7][6] = new Knight('W');
+        b.grid[0][1] = new Knight('B');
+        b.grid[0][6] = new Knight('B');
+        b.grid[7][1] = new Knight('W');
+        b.grid[7][6] = new Knight('W');
 
-        b.grid[0][2] = b.grid[0][5] = new Bishop('B');
-        b.grid[7][2] = b.grid[7][5] = new Bishop('W');
+        b.grid[0][2] = new Bishop('B');
+        b.grid[0][5] = new Bishop('B');
+        b.grid[7][2] = new Bishop('W');
+        b.grid[7][5] = new Bishop('W');
 
         b.grid[0][3] = new Queen('B');
         b.grid[7][3] = new Queen('W');
