@@ -123,6 +123,31 @@ public:
         grid[dx][dy] = p;
         grid[sx][sy] = NULL;
 
+      
+        delete grid[dx][dy];
+grid[dx][dy] = p;
+grid[sx][sy] = NULL;
+
+  //adding pawn promotion
+if (grid[dx][dy] && (grid[dx][dy]->getSymbol() == 'P' || grid[dx][dy]->getSymbol() == 'p')) {
+
+    if ((grid[dx][dy]->getColor() == 'W' && dx == 0) ||
+        (grid[dx][dy]->getColor() == 'B' && dx == 7)) {
+
+        char choice;
+        cout << "Promote pawn to (Q/R/B/N): ";
+        cin >> choice;
+
+        delete grid[dx][dy];
+
+        switch (toupper(choice)) {
+            case 'R': grid[dx][dy] = new Rook(turn); break;
+            case 'B': grid[dx][dy] = new Bishop(turn); break;
+            case 'N': grid[dx][dy] = new Knight(turn); break;
+            default:  grid[dx][dy] = new Queen(turn); break;
+        }
+    }
+}
         return true;
     }
 
