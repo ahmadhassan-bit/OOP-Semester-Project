@@ -9,13 +9,11 @@ class Piece {
 protected:
     char color;
     bool hasMoved;
-
 public:
     Piece(char c) {
     color = c;
     hasMoved = false;
 }
-
     char getColor() { 
         return color; 
     }
@@ -27,8 +25,6 @@ void setMoved() { hasMoved = true; }
 
     virtual ~Piece() {}
 };
-
-
 
 // ================= PIECES =================
 
