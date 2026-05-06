@@ -58,9 +58,9 @@ public:
             && b->pathClear(sx, sy, dx, dy);
     }
 };
-
 class Knight : public Piece {
 public:
+
     Knight(char c) : Piece(c) {}
     char getSymbol() { return color == 'W' ? 'N' : 'n'; }
 
