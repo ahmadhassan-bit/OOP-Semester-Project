@@ -8,16 +8,19 @@ class Board;
 class Piece {
 protected:
     char color;
+    bool hasMoved;
 
 public:
-    Piece(char c) { 
-        color = c;
-     }
+    Piece(char c) {
+    color = c;
+    hasMoved = false;
+}
 
     char getColor() { 
         return color; 
     }
-
+bool moved() { return hasMoved; }
+void setMoved() { hasMoved = true; }
     virtual char getSymbol() = 0;
 
     virtual bool isValidMove(int sx, int sy, int dx, int dy, Board* b) = 0;
@@ -25,6 +28,96 @@ public:
     virtual ~Piece() {}
 };
 
+
+
+// ================= PIECES =================
+
+class Rook : public Piece {
+public:
+    Rook(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'R' : 'r'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
+        return (sx == dx || sy == dy) && b->pathClear(sx, sy, dx, dy);
+    }
+};
+
+class Bishop : public Piece {
+public:
+    Bishop(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'B' : 'b'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
+        return abs(sx - dx) == abs(sy - dy) && b->pathClear(sx, sy, dx, dy);
+    }
+};
+
+class Queen : public Piece {
+public:
+    Queen(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'Q' : 'q'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
+        return (sx == dx || sy == dy || abs(sx - dx) == abs(sy - dy))
+            && b->pathClear(sx, sy, dx, dy);
+    }
+};
+
+class Knight : public Piece {
+public:
+    Knight(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'N' : 'n'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board*) {
+        int a = abs(sx - dx);
+        int b = abs(sy - dy);
+        return (a == 2 && b == 1) || (a == 1 && b == 2);
+    }
+};
+
+class King : public Piece {
+public:
+    King(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'K' : 'k'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board*) {
+        return (abs(sx - dx) <= 1 && abs(sy - dy) <= 1) 
+    || (sx == dx && abs(sy - dy) == 2);
+    }
+};
+
+class Pawn : public Piece {
+public:
+    Pawn(char c) : Piece(c) {}
+    char getSymbol() { return color == 'W' ? 'P' : 'p'; }
+
+    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
+
+        int dir = (color == 'W') ? -1 : 1;
+
+        // forward 1
+        if (sy == dy && b->grid[dx][dy] == NULL) {
+
+            if (dx == sx + dir)
+                return true;
+
+            // first move double
+            if ((color == 'W' && sx == 6) || (color == 'B' && sx == 1)) {
+                if (dx == sx + 2 * dir &&
+                    b->grid[sx + dir][sy] == NULL &&
+                    b->grid[dx][dy] == NULL)
+                    return true;
+            }
+        }
+
+        // capture
+        if (abs(dy - sy) == 1 && dx == sx + dir) {
+            return (b->grid[dx][dy] && b->grid[dx][dy]->getColor() != color);
+        }
+
+        return false;
+    }
+};
 // ================= BOARD =================
 class Board {
 public:
@@ -119,15 +212,67 @@ public:
         if (!simulate(sx, sy, dx, dy, turn))
             return false;
 
+        // adding castling
+if ((p->getSymbol() == 'K' || p->getSymbol() == 'k') && !p->moved()) {
+
+    if (sx == dx && abs(dy - sy) == 2) {
+
+        // King side
+        if (dy == 6) {
+            Piece* rook = grid[sx][7];
+
+            if (rook && !rook->moved() &&
+                grid[sx][5] == NULL && grid[sx][6] == NULL &&
+                !isCheck(turn) &&
+                simulate(sx, sy, sx, 5, turn) &&
+                simulate(sx, sy, sx, 6, turn)) {
+
+                grid[sx][6] = p;
+                grid[sx][4] = NULL;
+
+                grid[sx][5] = rook;
+                grid[sx][7] = NULL;
+
+                p->setMoved();
+                rook->setMoved();
+
+                return true;
+            }
+        }
+
+        // Queen side
+        if (dy == 2) {
+            Piece* rook = grid[sx][0];
+
+            if (rook && !rook->moved() &&
+                grid[sx][1] == NULL &&
+                grid[sx][2] == NULL &&
+                grid[sx][3] == NULL &&
+                !isCheck(turn) &&
+                simulate(sx, sy, sx, 3, turn) &&
+                simulate(sx, sy, sx, 2, turn)) {
+
+                grid[sx][2] = p;
+                grid[sx][4] = NULL;
+
+                grid[sx][3] = rook;
+                grid[sx][0] = NULL;
+
+                p->setMoved();
+                rook->setMoved();
+
+                return true;
+            }
+        }
+    }
+}
+
         delete grid[dx][dy];
         grid[dx][dy] = p;
         grid[sx][sy] = NULL;
+        grid[dx][dy]->setMoved();
 
       
-        delete grid[dx][dy];
-grid[dx][dy] = p;
-grid[sx][sy] = NULL;
-
   //adding pawn promotion
 if (grid[dx][dy] && (grid[dx][dy]->getSymbol() == 'P' || grid[dx][dy]->getSymbol() == 'p')) {
 
@@ -187,94 +332,6 @@ if (grid[dx][dy] && (grid[dx][dy]->getSymbol() == 'P' || grid[dx][dy]->getSymbol
             }
             cout << endl;
         }
-    }
-};
-
-// ================= PIECES =================
-
-class Rook : public Piece {
-public:
-    Rook(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'R' : 'r'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return (sx == dx || sy == dy) && b->pathClear(sx, sy, dx, dy);
-    }
-};
-
-class Bishop : public Piece {
-public:
-    Bishop(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'B' : 'b'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return abs(sx - dx) == abs(sy - dy) && b->pathClear(sx, sy, dx, dy);
-    }
-};
-
-class Queen : public Piece {
-public:
-    Queen(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'Q' : 'q'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return (sx == dx || sy == dy || abs(sx - dx) == abs(sy - dy))
-            && b->pathClear(sx, sy, dx, dy);
-    }
-};
-
-class Knight : public Piece {
-public:
-    Knight(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'N' : 'n'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board*) {
-        int a = abs(sx - dx);
-        int b = abs(sy - dy);
-        return (a == 2 && b == 1) || (a == 1 && b == 2);
-    }
-};
-
-class King : public Piece {
-public:
-    King(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'K' : 'k'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board*) {
-        return abs(sx - dx) <= 1 && abs(sy - dy) <= 1;
-    }
-};
-
-class Pawn : public Piece {
-public:
-    Pawn(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'P' : 'p'; }
-
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-
-        int dir = (color == 'W') ? -1 : 1;
-
-        // forward 1
-        if (sy == dy && b->grid[dx][dy] == NULL) {
-
-            if (dx == sx + dir)
-                return true;
-
-            // first move double
-            if ((color == 'W' && sx == 6) || (color == 'B' && sx == 1)) {
-                if (dx == sx + 2 * dir &&
-                    b->grid[sx + dir][sy] == NULL &&
-                    b->grid[dx][dy] == NULL)
-                    return true;
-            }
-        }
-
-        // capture
-        if (abs(dy - sy) == 1 && dx == sx + dir) {
-            return (b->grid[dx][dy] && b->grid[dx][dy]->getColor() != color);
-        }
-
-        return false;
     }
 };
 
