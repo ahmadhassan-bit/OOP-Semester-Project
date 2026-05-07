@@ -96,7 +96,12 @@ public:
 class Pawn : public Piece {
 public:
     Pawn(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'P' : 'p'; }
+    char getSymbol() {
+    if (color == 'W')
+        return 'P';
+    else
+        return 'p';
+}
 
     bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
 
