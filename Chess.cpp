@@ -9,19 +9,27 @@ class Piece {
 protected:
     char color;
     bool hasMoved;
-public:
-    Piece(char c) {
-    color = c;
-    hasMoved = false;
-}
-    char getColor() { 
-        return color; 
-    }
-bool moved() { return hasMoved; }
-void setMoved() { hasMoved = true; }
-    virtual char getSymbol() = 0;
 
-    virtual bool isValidMove(int sx, int sy, int dx, int dy, Board* b) = 0;
+public:
+    Piece(char c) : color(c), hasMoved(false) {}
+
+    char getColor() const {
+        return color;
+    }
+
+    bool moved() const {
+        return hasMoved;
+    }
+
+    void setMoved() {
+        hasMoved = true;
+    }
+
+    virtual char getSymbol() const = 0;
+
+    virtual bool isValidMove(int startX, int startY,
+                             int destX, int destY,
+                             Board* board) = 0;
 
     virtual ~Piece() {}
 };
