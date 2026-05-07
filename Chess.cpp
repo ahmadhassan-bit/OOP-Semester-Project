@@ -60,14 +60,25 @@ public:
 };
 class Knight : public Piece {
 public:
-
     Knight(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'N' : 'n'; }
 
+    char getSymbol() {
+        if (color == 'W')
+            return 'N';
+        else
+            return 'n';
+    }
     bool isValidMove(int sx, int sy, int dx, int dy, Board*) {
-        int a = abs(sx - dx);
-        int b = abs(sy - dy);
-        return (a == 2 && b == 1) || (a == 1 && b == 2);
+        int r = abs(sx - dx);
+        int c = abs(sy - dy);
+
+        if (r == 2 && c == 1)
+            return true;
+
+        if (r == 1 && c == 2)
+            return true;
+
+        return false;
     }
 };
 
