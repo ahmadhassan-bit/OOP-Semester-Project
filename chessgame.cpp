@@ -1,8 +1,7 @@
-// ============================ chess.cpp ============================
 
 #include "chess.h"
 
-// ================= PIECE BASE =================
+//PIECE BASE 
 
 Piece::Piece(char c) : color(c), hasMoved(false) {}
 
@@ -18,7 +17,7 @@ void Piece::setMoved() {
     hasMoved = true;
 }
 
-// ================= BOARD =================
+// BOARD
 
 Board::Board() {
 
@@ -134,7 +133,7 @@ bool Board::move(int sx, int sy, int dx, int dy, char turn) {
     if (!simulate(sx, sy, dx, dy, turn))
         return false;
 
-    // ================= CASTLING =================
+    // CASTLING 
 
     if ((p->getSymbol() == 'K' ||
          p->getSymbol() == 'k') &&
@@ -204,7 +203,7 @@ bool Board::move(int sx, int sy, int dx, int dy, char turn) {
 
     grid[dx][dy]->setMoved();
 
-    // ================= PAWN PROMOTION =================
+    // PAWN PROMOTION
 
     if (grid[dx][dy] &&
         (grid[dx][dy]->getSymbol() == 'P' ||
@@ -295,7 +294,7 @@ void Board::display() {
     }
 }
 
-// ================= PIECE DEFINITIONS =================
+// PIECE DEFINITIONS
 
 Rook::Rook(char c) : Piece(c) {}
 
@@ -313,7 +312,7 @@ bool Rook::isValidMove(int startX, int startY,
     return false;
 }
 
-// ================= BISHOP =================
+// BISHOP
 
 Bishop::Bishop(char c) : Piece(c) {}
 
@@ -329,7 +328,7 @@ bool Bishop::isValidMove(int startX, int startY,
            board->pathClear(startX, startY, destX, destY);
 }
 
-// ================= QUEEN =================
+// QUEEN
 
 Queen::Queen(char c) : Piece(c) {}
 
@@ -348,7 +347,7 @@ bool Queen::isValidMove(int startX, int startY,
            board->pathClear(startX, startY, destX, destY);
 }
 
-// ================= KNIGHT =================
+// KNIGHT 
 
 Knight::Knight(char c) : Piece(c) {}
 
@@ -365,7 +364,7 @@ bool Knight::isValidMove(int sx, int sy, int dx, int dy, Board*) {
            (r == 1 && c == 2);
 }
 
-// ================= KING =================
+// KING
 
 King::King(char c) : Piece(c) {}
 
@@ -381,7 +380,7 @@ bool King::isValidMove(int sx, int sy, int dx, int dy, Board*) {
            (sx == dx && abs(sy - dy) == 2);
 }
 
-// ================= PAWN =================
+// PAWN 
 
 Pawn::Pawn(char c) : Piece(c) {}
 
@@ -421,7 +420,7 @@ bool Pawn::isValidMove(int sx, int sy, int dx, int dy, Board* b) {
     return false;
 }
 
-// ================= GAME =================
+// GAME 
 
 Game::Game() {
 

@@ -1,5 +1,3 @@
-// ============================ chess.h ============================
-
 #ifndef CHESS_H
 #define CHESS_H
 
@@ -11,7 +9,7 @@ using namespace std;
 
 class Board;
 
-// ================= PIECE BASE =================
+//PIECE BASE
 class Piece {
 protected:
     char color;
@@ -35,7 +33,7 @@ public:
     virtual ~Piece() {}
 };
 
-// ================= PIECES =================
+//PIECES
 
 class Rook : public Piece {
 public:
@@ -97,7 +95,7 @@ public:
     bool isValidMove(int sx, int sy, int dx, int dy, Board* b) override;
 };
 
-// ================= BOARD =================
+//BOARD
 
 class Board {
 public:
@@ -122,7 +120,7 @@ public:
     void display();
 };
 
-// ================= GAME =================
+//GAME
 
 class Game {
 public:
