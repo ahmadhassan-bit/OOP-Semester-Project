@@ -39,10 +39,20 @@ public:
 class Rook : public Piece {
 public:
     Rook(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'R' : 'r'; }
 
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return (sx == dx || sy == dy) && b->pathClear(sx, sy, dx, dy);
+    char getSymbol() const override {
+        return (color == 'W') ? 'R' : 'r';
+    }
+
+    bool isValidMove(int startX, int startY,
+                     int destX, int destY,
+                     Board* board) override {
+        
+        if (startX == destX || startY == destY) {
+            return board->pathClear(startX, startY, destX, destY);
+        }
+
+        return false;
     }
 };
 
