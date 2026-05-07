@@ -76,11 +76,18 @@ public:
 class Queen : public Piece {
 public:
     Queen(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'Q' : 'q'; }
 
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return (sx == dx || sy == dy || abs(sx - dx) == abs(sy - dy))
-            && b->pathClear(sx, sy, dx, dy);
+    char getSymbol() const override {
+        return (color == 'W') ? 'Q' : 'q';
+    }
+
+    bool isValidMove(int startX, int startY,
+                     int destX, int destY,
+                     Board* board) override {
+
+        return (startX == destX || startY == destY ||
+                abs(startX - destX) == abs(startY - destY)) &&
+               board->pathClear(startX, startY, destX, destY);
     }
 };
 class Knight : public Piece {
