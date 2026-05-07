@@ -59,10 +59,17 @@ public:
 class Bishop : public Piece {
 public:
     Bishop(char c) : Piece(c) {}
-    char getSymbol() { return color == 'W' ? 'B' : 'b'; }
 
-    bool isValidMove(int sx, int sy, int dx, int dy, Board* b) {
-        return abs(sx - dx) == abs(sy - dy) && b->pathClear(sx, sy, dx, dy);
+    char getSymbol() const override {
+        return (color == 'W') ? 'B' : 'b';
+    }
+
+    bool isValidMove(int startX, int startY,
+                     int destX, int destY,
+                     Board* board) override {
+
+        return abs(startX - destX) == abs(startY - destY) &&
+               board->pathClear(startX, startY, destX, destY);
     }
 };
 
